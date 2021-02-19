@@ -18,10 +18,14 @@ Usage
    
    pdr.ib.time_series.IBTimeSeriesReader(symbols='396336017', period = '1w', bar = '1h', session = session).read()
 
+Future Work
+-----------
+
+If anyone at Interactive Brokers is watching, please surface options data and an isTruncated flag!
 
 Pandas Datareader readme continues below.
 
-pandas-datareader, with Interactive Brokers Gateway
+pandas-datareader
 =================
 
 Up to date remote data access for pandas, works for multiple versions of pandas.

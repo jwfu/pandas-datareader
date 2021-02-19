@@ -1,6 +1,5 @@
-import datetime as dt
 import pandas as pd
-import json
+import warnings
 
 from pandas_datareader.base import _BaseReader
 
@@ -103,4 +102,10 @@ class IBTimeSeriesReader(_BaseReader):
         df.columns = ["open", "close", "high", "low", "volume", "time"]
         df["time"] = pd.to_datetime(df["time"], unit="ms")
         df.set_index("time", inplace=True)
+        if len(df) == 1000:
+            warnings.warn(
+                "DataFrame returned is exactly 1000 lines long,"
+                " the data returned is probably truncated."
+            )
+
         return df
