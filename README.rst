@@ -3,13 +3,20 @@ pandas-datareader, with Interactive Brokers Gateway
 
 I'm using this fork to add Interactive Brokers Gateway to Pandas Datareader.
 
+This package relies on a IB Gateway being active at its default location: https://localhost:5000.  You can get the Gateway `here https://www.interactivebrokers.com/en/index.php?f=16457>`_.  Getting started guide is `here <https://interactivebrokers.github.io/cpwebapi/>`_ for running the service.
+
 Usage
 -----
 
 .. code-block:: python
 
+   import requests
    import pandas_datareader as pdr
-   pdr.ib.time_series.IBTimeSeriesReader(symbols='396336017', period = '1w', bar = '1h').read()
+
+   session = requests.Session()
+   session.verify = False #required due to self-signed SSL cert
+   
+   pdr.ib.time_series.IBTimeSeriesReader(symbols='396336017', period = '1w', bar = '1h', session = session).read()
 
 
 Pandas Datareader readme continues below.
