@@ -9,7 +9,7 @@ Usage
 .. code-block:: python
 
    import pandas_datareader as pdr
-   pdr.av.time_series.AVTimeSeriesReader((symbols='396336017', period = '1w', bar = '1h').read()
+   pdr.ib.time_series.IBTimeSeriesReader(symbols='396336017', period = '1w', bar = '1h').read()
 
 
 Pandas Datareader readme continues below.
