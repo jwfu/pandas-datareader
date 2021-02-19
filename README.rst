@@ -1,4 +1,20 @@
-pandas-datareader
+pandas-datareader, with Interactive Brokers Gateway
+=================
+
+I'm using this fork to add Interactive Brokers Gateway to Pandas Datareader.
+
+Usage
+-----
+
+.. code-block:: python
+
+   import pandas_datareader as pdr
+   pdr.av.time_series.AVTimeSeriesReader((symbols='396336017', period = '1w', bar = '1h').read()
+
+
+Pandas Datareader readme continues below.
+
+pandas-datareader, with Interactive Brokers Gateway
 =================
 
 Up to date remote data access for pandas, works for multiple versions of pandas.
