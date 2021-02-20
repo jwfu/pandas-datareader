@@ -1,5 +1,6 @@
 import pandas as pd
 import warnings
+from time import sleep
 
 from pandas_datareader.base import _BaseReader
 
@@ -109,3 +110,33 @@ class IBTimeSeriesReader(_BaseReader):
             )
 
         return df
+    def _error_handling(self,out):
+        print('handling errors')
+
+        if out.status_code == 401:
+
+            print('checking auth status')
+            url = 'https://localhost:5000/v1/api/iserver/auth/status'
+            response = self.session.post(
+                url, 
+                timeout=self.timeout
+            )
+
+            if response.status_code == 401:
+                raise PermissionError('Please restart IB Gateway')
+            
+            print(response.text)
+            print(url)
+
+            authStatus = json.loads(response.text)
+
+            print(authStatus)
+
+            if authStatus['authenticated'] == False:
+                url = 'https://localhost:5000/v1/api/iserver/reauthenticate'
+                response = self.session.post(
+                    url, 
+                    timeout=self.timeout
+                )
+                sleep(10)
+
