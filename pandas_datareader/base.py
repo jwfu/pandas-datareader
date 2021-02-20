@@ -232,6 +232,8 @@ class _BaseReader(object):
 
             if response.status_code == 401:
                 raise PermissionError('Please restart IB Gateway')
+            
+            print(response.text)
 
             authStatus = json.loads(response.text)
 
