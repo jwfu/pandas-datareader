@@ -111,13 +111,11 @@ class IBTimeSeriesReader(_BaseReader):
         return df
 
     def _error_handling(self, out):
-        
         print('handling errors')
-
         if out.status_code == 401:
         #try to reuthenticate
             print('reauthenticatng')
             url = self.url + '/reauthenticate'
             response = self.session.post(
-                url, params=params, timeout=self.timeout
+                url, timeout=self.timeout
             )
