@@ -2,7 +2,6 @@ import datetime
 import time
 from urllib.parse import urlencode
 import warnings
-from time import sleep
 import json
 
 import numpy as np
@@ -22,7 +21,6 @@ from pandas_datareader.compat import (
     bytes_to_str,
     string_types,
 )
-
 
 class _BaseReader(object):
     """
@@ -209,47 +207,47 @@ class _BaseReader(object):
         return False
 
     def _error_handling(self, out):
-        """If necessary, a service can trigger actions for any particular errors.
+        # """If necessary, a service can trigger actions for any particular errors.
 
-        TODO: migrate this to the subclass
+        # TODO: migrate this to the subclass
 
-        Parameters
-        ----------
-        out: bytes
-            The raw output from an HTTP request
+        # Parameters
+        # ----------
+        # out: bytes
+        #     The raw output from an HTTP request
 
-        """
-        print('handling errors')
+        # """
+        # print('handling errors')
 
-        if out.status_code == 401:
+        # if out.status_code == 401:
 
-            print('checking auth status')
-            url = 'https://localhost:5000/v1/api/iserver/auth/status'
-            response = self.session.post(
-                url, 
-                timeout=self.timeout
-            )
+        #     print('checking auth status')
+        #     url = 'https://localhost:5000/v1/api/iserver/auth/status'
+        #     response = self.session.post(
+        #         url, 
+        #         timeout=self.timeout
+        #     )
 
-            if response.status_code == 401:
-                raise PermissionError('Please restart IB Gateway')
-            
-            print(response.text)
-            print(url)
+        #     if response.status_code == 401:
+        #         raise PermissionError('Please restart IB Gateway')
 
-            authStatus = json.loads(response.text)
+        #     print(url)
 
-            print(authStatus)
+        #     print(response.text)
 
-            if authStatus['authenticated'] == False:
-                url = 'https://localhost:5000/v1/api/iserver/reauthenticate'
-                response = self.session.post(
-                    url, 
-                    timeout=self.timeout
-                )
-                sleep(10)
+        #     authStatus = json.loads(response.text)
 
+        #     print(authStatus)
 
-
+        #     if authStatus['authenticated'] == False:
+        #         url = 'https://localhost:5000/v1/api/iserver/reauthenticate'
+        #         response = self.session.post(
+        #             url, 
+        #             timeout=self.timeout
+        #         )
+        #         time.sleep(10)
+        pass
+    
     def _read_lines(self, out):
         rs = read_csv(out, index_col=0, parse_dates=True, na_values=("-", "null"))[::-1]
         # Needed to remove blank space character in header names
@@ -269,7 +267,6 @@ class _BaseReader(object):
             rs.index.name = rs.index.name.encode("ascii", "ignore").decode()
 
         return rs
-
 
 class _DailyBaseReader(_BaseReader):
     """ Base class for Google / Yahoo daily reader """
