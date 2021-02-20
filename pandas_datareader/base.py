@@ -3,6 +3,7 @@ import time
 from urllib.parse import urlencode
 import warnings
 from time import sleep
+import json
 
 import numpy as np
 from pandas import DataFrame, concat, read_csv
