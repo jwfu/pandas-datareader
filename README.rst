@@ -3,7 +3,7 @@ pandas-datareader, with Interactive Brokers Gateway
 
 I'm using this fork to add Interactive Brokers Gateway to Pandas Datareader.
 
-This package relies on a IB Gateway being active at its default location: https://localhost:5000.  You can get the Gateway `here https://www.interactivebrokers.com/en/index.php?f=16457>`_.  Getting started guide is `here <https://interactivebrokers.github.io/cpwebapi/>`_ for running the service.
+This package relies on a IB Gateway being active at its default location: https://localhost:5000.  You can get the Gateway `here <https://www.interactivebrokers.com/en/index.php?f=16457>`_.  Getting started guide is `here <https://interactivebrokers.github.io/cpwebapi/>`_ for running the service.
 
 Usage
 -----

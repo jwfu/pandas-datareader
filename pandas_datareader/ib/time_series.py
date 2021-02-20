@@ -3,7 +3,7 @@ import warnings
 
 from pandas_datareader.base import _BaseReader
 
-IB_BASE_URL = "https://localhost:5000/v1/api/iserver/marketdata/history"
+IB_BASE_URL = "https://localhost:5000/v1/api/iserver"
 
 
 class IBTimeSeriesReader(_BaseReader):
@@ -68,7 +68,7 @@ class IBTimeSeriesReader(_BaseReader):
     @property
     def url(self):
         """ API URL """
-        return IB_BASE_URL
+        return IB_BASE_URL + '/marketdata/history'
 
     @property
     def params(self):
@@ -109,3 +109,14 @@ class IBTimeSeriesReader(_BaseReader):
             )
 
         return df
+
+    def _output_error(self, out):
+        
+        if out.status_code = 400:
+        #try to reuthenticate
+        url = self.url + '/reauthenticate'
+        response = self.session.post(
+            url, params=params, timeout=self.timeout
+        ) 
+
+        return False #returns False to not exit the loop
