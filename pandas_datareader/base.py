@@ -2,6 +2,8 @@ import datetime
 import time
 from urllib.parse import urlencode
 import warnings
+from time import sleep
+import json
 
 import numpy as np
 from pandas import DataFrame, concat, read_csv
@@ -236,3 +238,141 @@ class _BaseReader(object):
             rs.index.name = rs.index.name.encode("ascii", "ignore").decode()
 
         return rs
+
+
+class _DailyBaseReader(_BaseReader):
+    """ Base class for Google / Yahoo daily reader """
+
+    def __init__(
+        self,
+        symbols=None,
+        start=None,
+        end=None,
+        retry_count=3,
+        pause=0.1,
+        session=None,
+        chunksize=25,
+    ):
+        super(_DailyBaseReader, self).__init__(
+            symbols=symbols,
+            start=start,
+            end=end,
+            retry_count=retry_count,
+            pause=pause,
+            session=session,
+        )
+        self.chunksize = chunksize
+
+    def _get_params(self, *args, **kwargs):
+        raise NotImplementedError
+
+    def read(self):
+        """Read data"""
+        # If a single symbol, (e.g., 'GOOG')
+        if isinstance(self.symbols, (string_types, int)):
+            df = self._read_one_data(self.url, params=self._get_params(self.symbols))
+        # Or multiple symbols, (e.g., ['GOOG', 'AAPL', 'MSFT'])
+        elif isinstance(self.symbols, DataFrame):
+            df = self._dl_mult_symbols(self.symbols.index)
+        else:
+            df = self._dl_mult_symbols(self.symbols)
+        return df
+
+    def _dl_mult_symbols(self, symbols):
+        stocks = {}
+        failed = []
+        passed = []
+        for sym_group in _in_chunks(symbols, self.chunksize):
+            for sym in sym_group:
+                try:
+                    stocks[sym] = self._read_one_data(self.url, self._get_params(sym))
+                    passed.append(sym)
+                except (IOError, KeyError):
+                    msg = "Failed to read symbol: {0!r}, replacing with NaN."
+                    warnings.warn(msg.format(sym), SymbolWarning)
+                    failed.append(sym)
+
+        if len(passed) == 0:
+            msg = "No data fetched using {0!r}"
+            raise RemoteDataError(msg.format(self.__class__.__name__))
+        try:
+            if len(stocks) > 0 and len(failed) > 0 and len(passed) > 0:
+                df_na = stocks[passed[0]].copy()
+                df_na[:] = np.nan
+                for sym in failed:
+                    stocks[sym] = df_na
+            if PANDAS_0230:
+                result = concat(stocks, sort=True).unstack(level=0)
+            else:
+                result = concat(stocks).unstack(level=0)
+            result.columns.names = ["Attributes", "Symbols"]
+            return result
+        except AttributeError:
+            # cannot construct a panel with just 1D nans indicating no data
+            msg = "No data fetched using {0!r}"
+            raise RemoteDataError(msg.format(self.__class__.__name__))
+
+
+def _in_chunks(seq, size):
+    """
+    Return sequence in 'chunks' of size defined by size
+    """
+    return (seq[pos : pos + size] for pos in range(0, len(seq), size))
+
+
+class _OptionBaseReader(_BaseReader):
+    def __init__(self, symbol, session=None):
+        """ Instantiates options_data with a ticker saved as symbol """
+        self.symbol = symbol.upper()
+        super(_OptionBaseReader, self).__init__(symbols=symbol, session=session)
+
+    def get_options_data(self, month=None, year=None, expiry=None):
+        """
+        ***Experimental***
+        Gets call/put data for the stock with the expiration data in the
+        given month and year
+        """
+        raise NotImplementedError
+
+    def get_call_data(self, month=None, year=None, expiry=None):
+        """
+        ***Experimental***
+        Gets call/put data for the stock with the expiration data in the
+        given month and year
+        """
+        raise NotImplementedError
+
+    def get_put_data(self, month=None, year=None, expiry=None):
+        """
+        ***Experimental***
+        Gets put data for the stock with the expiration data in the
+        given month and year
+        """
+        raise NotImplementedError
+
+    def get_near_stock_price(
+        self, above_below=2, call=True, put=False, month=None, year=None, expiry=None
+    ):
+        """
+        ***Experimental***
+        Returns a data frame of options that are near the current stock price.
+        """
+        raise NotImplementedError
+
+    def get_forward_data(
+        self, months, call=True, put=False, near=False, above_below=2
+    ):  # pragma: no cover
+        """
+        ***Experimental***
+        Gets either call, put, or both data for months starting in the current
+        month and going out in the future a specified amount of time.
+        """
+        raise NotImplementedError
+
+    def get_all_data(self, call=True, put=True):
+        """
+        ***Experimental***
+        Gets either call, put, or both data for all available months starting
+        in the current month.
+        """
+        raise NotImplementedError
