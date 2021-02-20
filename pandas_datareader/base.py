@@ -155,6 +155,7 @@ class _BaseReader(object):
             response = self.session.get(
                 url, params=params, headers=headers, timeout=self.timeout
             )
+            print('doing retry %s' % _)
             if response.status_code == requests.codes.ok:
                 return response
 
