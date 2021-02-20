@@ -2,6 +2,7 @@ import datetime
 import time
 from urllib.parse import urlencode
 import warnings
+from time import sleep
 
 import numpy as np
 from pandas import DataFrame, concat, read_csv
@@ -215,8 +216,15 @@ class _BaseReader(object):
             The raw output from an HTTP request
 
         """
-        print('not implemented, passing')
-        pass
+        print('handling errors')
+        if out.status_code == 401:
+            print('reauthenticatng')
+            url = self.url + '/reauthenticate'
+            response = self.session.post(
+                url, 
+                timeout=self.timeout
+            )
+            sleep(5)
 
     def _read_lines(self, out):
         rs = read_csv(out, index_col=0, parse_dates=True, na_values=("-", "null"))[::-1]
