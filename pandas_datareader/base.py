@@ -215,7 +215,6 @@ class _BaseReader(object):
             The raw output from an HTTP request
 
         """
-
         raise NotImplementedError("Subclass has not implemented method.")
         
     def _read_lines(self, out):
