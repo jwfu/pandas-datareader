@@ -111,6 +111,8 @@ class IBTimeSeriesReader(_BaseReader):
         return df
 
     def _error_handling(self, out):
+        
+        print('handling errors')
 
         if out.status_code == 401:
         #try to reuthenticate

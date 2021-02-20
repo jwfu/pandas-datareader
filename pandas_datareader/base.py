@@ -198,9 +198,13 @@ class _BaseReader(object):
         ----------
         out: bytes
             The raw output from an HTTP request
+
+        Returns
+        -------
+        boolean
         """
 
-        pass
+        return False
 
     def _error_handling(self, out):
         """If necessary, a service can trigger actions for any particular errors.
@@ -210,9 +214,6 @@ class _BaseReader(object):
         out: bytes
             The raw output from an HTTP request
 
-        Returns
-        -------
-        boolean
         """
 
         pass
