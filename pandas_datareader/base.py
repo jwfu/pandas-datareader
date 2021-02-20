@@ -216,8 +216,8 @@ class _BaseReader(object):
 
         """
 
-        pass
-
+        raise NotImplementedError("Subclass has not implemented method.")
+        
     def _read_lines(self, out):
         rs = read_csv(out, index_col=0, parse_dates=True, na_values=("-", "null"))[::-1]
         # Needed to remove blank space character in header names
