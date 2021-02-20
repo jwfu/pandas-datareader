@@ -110,7 +110,7 @@ class IBTimeSeriesReader(_BaseReader):
 
         return df
 
-    def _output_error(self, out):
+    def _error_handling(self, out):
 
         if out.status_code == 401:
         #try to reuthenticate
@@ -119,5 +119,3 @@ class IBTimeSeriesReader(_BaseReader):
             response = self.session.post(
                 url, params=params, timeout=self.timeout
             )
-
-        return False #returns False to not exit the loop

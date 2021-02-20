@@ -156,22 +156,27 @@ class _BaseReader(object):
                 url, params=params, headers=headers, timeout=self.timeout
             )
             print('doing retry %s' % _)
-            if response.status_code == requests.codes.ok:
+            if response.status_code == requests.codes.ok: #happy path
                 return response
 
-            if response.encoding:
+            if response.encoding: #stores last response text
                 last_response_text = response.text.encode(response.encoding)
             time.sleep(pause)
 
             # Increase time between subsequent requests, per subclass.
             pause *= self.pause_multiplier
-            # Get a new breadcrumb if necessary, in case ours is invalidated
+            
+            # Get a new breadcrumb if necessary, in case ours is invalidated            
             if isinstance(params, list) and "crumb" in params:
                 params["crumb"] = self._get_crumb(self.retry_count)
+
+            # Try to resolve known issues before next retry
+            self._error_handling(response)
 
             # If our output error function returns True, exit the loop.
             if self._output_error(response):
                 break
+
 
         if params is not None and len(params) > 0:
             url = url + "?" + urlencode(params)
@@ -193,12 +198,24 @@ class _BaseReader(object):
         ----------
         out: bytes
             The raw output from an HTTP request
+        """
+
+        pass
+
+    def _error_handling(self, out):
+        """If necessary, a service can trigger actions for any particular errors.
+
+        Parameters
+        ----------
+        out: bytes
+            The raw output from an HTTP request
 
         Returns
         -------
         boolean
         """
-        return False
+
+        pass
 
     def _read_lines(self, out):
         rs = read_csv(out, index_col=0, parse_dates=True, na_values=("-", "null"))[::-1]
