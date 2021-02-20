@@ -19,6 +19,7 @@ from pandas_datareader.eurostat import EurostatReader
 from pandas_datareader.exceptions import DEP_ERROR_MSG, ImmediateDeprecationError
 from pandas_datareader.famafrench import FamaFrenchReader
 from pandas_datareader.fred import FredReader
+from pandas_datareader.ib.time_series import IBTimeSeriesReader
 from pandas_datareader.iex.daily import IEXDailyReader
 from pandas_datareader.iex.deep import Deep as IEXDeep
 from pandas_datareader.iex.tops import LastReader as IEXLasts, TopsReader as IEXTops
@@ -268,6 +269,18 @@ def get_iex_book(*args, **kwargs):
     DataFrame
     """
     return IEXDeep(*args, **kwargs).read()
+
+def get_data_ib(*args, **kwargs):
+    """
+    Returns DataFrame of the Interactive Brokers Market Data History endpoint
+
+    Reference: https://www.interactivebrokers.co.uk/api/doc.html#tag/Market-Data/paths/~1iserver~1marketdata~1history/get
+
+    Returns
+    -------
+    DataFrame
+    """
+    return IBTimeSeriesReader(*args, **kwargs).read()
 
 
 @deprecate_kwarg("access_key", "api_key")

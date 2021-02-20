@@ -20,6 +20,7 @@ from .data import (
     get_iex_book,
     get_iex_data_tiingo,
     get_iex_symbols,
+    get_data_ib,
     get_last_iex,
     get_markets_iex,
     get_nasdaq_symbols,
@@ -62,6 +63,7 @@ __all__ = [
     "get_data_tiingo",
     "get_iex_data_tiingo",
     "get_data_alphavantage",
+    "get_data_ib"
     "test",
 ]
 
