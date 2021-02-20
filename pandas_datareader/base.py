@@ -211,13 +211,44 @@ class _BaseReader(object):
     def _error_handling(self, out):
         """If necessary, a service can trigger actions for any particular errors.
 
+        TODO: migrate this to the subclass
+
         Parameters
         ----------
         out: bytes
             The raw output from an HTTP request
 
         """
-        pass
+        print('handling errors')
+
+        if out.status_code == 401:
+
+            print('checking auth status')
+            url = 'https://localhost:5000/v1/api/iserver/auth/status'
+            response = self.session.post(
+                url, 
+                timeout=self.timeout
+            )
+
+            if response.status_code == 401:
+                raise PermissionError('Please restart IB Gateway')
+            
+            print(response.text)
+            print(url)
+
+            authStatus = json.loads(response.text)
+
+            print(authStatus)
+
+            if authStatus['authenticated'] == False:
+                url = 'https://localhost:5000/v1/api/iserver/reauthenticate'
+                response = self.session.post(
+                    url, 
+                    timeout=self.timeout
+                )
+                sleep(10)
+
+
 
     def _read_lines(self, out):
         rs = read_csv(out, index_col=0, parse_dates=True, na_values=("-", "null"))[::-1]
